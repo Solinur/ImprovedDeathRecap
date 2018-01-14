@@ -1,0 +1,29 @@
+0.4: DL: 1,008 (02.10.2016 22:00)
+[*]The graphical interface has been rewritten. (in XML) 
+[*]The lock window option was inverted but now works correctly
+[*]The timestamps are now formatted consistantly 
+[*]Added a german translation (except the combat log, this will follow later)
+[*]Deaths are now stored separately and can be shown by selecting them in the dropdown menu. 
+[*]Deaths can now be copied to clipboard to share them with your friends. 
+
+0.4.1 DL: 1,246 (01.11.2016 21:06)
+[*]Updated LibAddonMenu to version 2.0 r23
+
+0.4.2 DL: 1,389 (07.11.2016 23:47)
+[*]Added Japanese Translation
+
+0.4.3 DL: 1,951 (05.02.2016 15:54)
+[*]API Bump to Homestead (100018)
+
+0.4.4 2,497 (19.03.2017) 14:31
+[*]Small fixes
+
+0.4.5 3,040 (22.05.2017) 22:39
+[*]API Bump to Morrowind (100019)
+
+0.4.7 3,714 (13.08.2017) 20:40
+[*]API Bump to Horns of the Reach (100020)
+
+0.4.8 4,702 (01.05.2018) 19:24
+[*]API Bump to Clockwork City (100021)
+[*]Updated LibAddonMenu to version 2.0 r25 to fix an issue.
