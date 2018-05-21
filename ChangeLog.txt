@@ -27,3 +27,7 @@
 0.4.8 4,702 (01.05.2018) 19:24
 [*]API Bump to Clockwork City (100021)
 [*]Updated LibAddonMenu to version 2.0 r25 to fix an issue.
+
+0.4.9 5,800 (21.05.2018) 16:20
+[*]API Bump to Summerset (100023)
+[*]Update LAM to r26
