@@ -31,3 +31,6 @@
 0.4.9 5,800 (21.05.2018) 16:20
 [*]API Bump to Summerset (100023)
 [*]Update LAM to r26
+
+0.4.10: DL: 6,800 (13.08.2018) 01:17
+[*]API Bump to Wolfhunter (100024)
