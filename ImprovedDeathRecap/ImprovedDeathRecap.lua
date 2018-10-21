@@ -9,7 +9,7 @@ IDR = IDR or {}
 local IDR = IDR
  
 IDR.name 		= "ImprovedDeathRecap"
-IDR.version 	= "0.4.11"
+IDR.version 	= "0.4.12"
 IDR.settings 	= {}
 
 IDR.defaults = 
@@ -125,9 +125,10 @@ end
 
 function IDR.UpdateDeathList() --similar to ZO_ComboBox_Base:AddItems(items) but with ipairs
 
-	local items=IDR.settings.deathhistory
+	local items = IDR.settings.deathhistory
+	
 	if items == nil or #items==0 then return end
-	local menu=IDR.dropdown
+	local menu = IDR.dropdown
 	
 	menu:ClearItems()
 	
