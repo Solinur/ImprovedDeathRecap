@@ -40,3 +40,10 @@
 
 0.4.12: DL: 7,977 (21.10.2018) 19:58
 [*]API Bump to Murkmire (100025)
+
+0.4.13: DL: 9,462 (22.01.2019) 00:38
+[*]API Bump to Wrathstone (100026)
+[*]Reorganized bundled libraries (Make sure to activate them in the Addon Panel)
+
+0.4.14: DL: 9,477 (22.01.2019) 01:10
+[*]API Bump to Wrathstone (100026)
