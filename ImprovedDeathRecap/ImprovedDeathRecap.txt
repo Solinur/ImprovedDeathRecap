@@ -1,8 +1,9 @@
 ﻿## Title: ImprovedDeathRecap
 ## APIVersion: 100025 100026
 ## Author: Solinur/decay
-## Version: 0.4.13
+## Version: 0.4.14
 ## DependsOn: LibAddonMenu-2.0 LibStub
+## OptionalDependsOn:
 ## SavedVariables: ImprovedDeathRecapSavedVariables
 
 ## This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. 
