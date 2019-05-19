@@ -1,7 +1,7 @@
 ﻿## Title: ImprovedDeathRecap
-## APIVersion: 100025 100026
+## APIVersion: 100026 100027
 ## Author: Solinur/decay
-## Version: 0.4.14
+## Version: 0.4.15
 ## DependsOn: LibAddonMenu-2.0 LibStub
 ## OptionalDependsOn:
 ## SavedVariables: ImprovedDeathRecapSavedVariables
