@@ -23,8 +23,6 @@ I want to mention Atropos (FTC) for some useful code for creating the log and al
 
 *Decay2 aka Solinur (Pact EU)*
 
-===================
-
 ## Deutsch:
 
 Falls ihr euch je gefragt habt warum ihr gestorben seid, aber keine Zeit  hatttet den eingebauten Todesrückblick anzuschauen, oder glaubt ihr  euer Heiler taugt nichts? Dann ist **Improved Death Recap** genau das richtige für euch!
@@ -38,8 +36,6 @@ Das ist mein erstes Addon und auch mein erstes Programm in lua,  desawegen bitte
 Ich möchte mich bei Atropos (FTC) dafür bedanken, dass ich einige  nützliche Codezeilen übernehmen durfte und für das erstellen des  Logfensters außerdem bei noch Coolmodi (Group Damage) - Ich habe durch  deren Addons ich viel gelernt. Außerdem werden die folgenden  Bibliotheken benutzt: LibStub, LibAddonMenu (Seerah), und LibMsgWin  (Circonian). Vielen Dank für diese nützlichen Werkzeuge. 
 
 *Decay2 aka Solinur (Pact EU)*
-
-===================
 
 ## 日本語:
 
