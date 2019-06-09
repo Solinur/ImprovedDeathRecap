@@ -153,8 +153,11 @@ function IDR.showclipboard()
 end
 
 
-function IDR.CombatEvent(eventCode , result , isError , abilityName , abilityGraphic , abilityActionSlotType , sourceName , sourceType , targetName , targetType , hitValue , powerType , damageType , log , sourceUnitId , targetUnitId , abilityId)
+function IDR.CombatEvent(eventCode , result , isError , abilityName , abilityGraphic , abilityActionSlotType , sourceName , sourceType , targetName , targetType , hitValue , powerType , damageType , log , sourceUnitId , targetUnitId , abilityId, overFlow)
 	local target = zo_strformat("<<!aC:1>>",targetName)
+	
+	hitValue = overFlow + hitValue
+	
 	if (hitValue>0 and target==IDR.playername and (result==ACTION_RESULT_DAMAGE or result==ACTION_RESULT_CRITICAL_DAMAGE or result==ACTION_RESULT_DOT_TICK or result==ACTION_RESULT_DOT_TICK_CRITICAL or result==ACTION_RESULT_BLOCKED or result==ACTION_RESULT_BLOCKED_DAMAGE or result==ACTION_RESULT_ABSORBED or result==ACTION_RESULT_DAMAGE_SHIELDED or result==ACTION_RESULT_HEAL or result==ACTION_RESULT_CRITICAL_HEAL or result==ACTION_RESULT_HOT_TICK or result==ACTION_RESULT_HOT_TICK_CRITICAL or result==ACTION_RESULT_FALL_DAMAGE)) then
 		local target = zo_strformat("<<!aC:1>>",targetName)
 		local source = zo_strformat("<<!aC:1>>",sourceName)
