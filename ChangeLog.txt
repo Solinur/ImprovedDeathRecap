@@ -1,59 +1,63 @@
 0.4: DL: 1,008 (02.10.2016 22:00)
-[*]The graphical interface has been rewritten. (in XML) 
-[*]The lock window option was inverted but now works correctly
-[*]The timestamps are now formatted consistantly 
-[*]Added a german translation (except the combat log, this will follow later)
-[*]Deaths are now stored separately and can be shown by selecting them in the dropdown menu. 
-[*]Deaths can now be copied to clipboard to share them with your friends. 
+[*] The graphical interface has been rewritten. (in XML) 
+[*] The lock window option was inverted but now works correctly
+[*] The timestamps are now formatted consistantly 
+[*] Added a german translation (except the combat log, this will follow later)
+[*] Deaths are now stored separately and can be shown by selecting them in the dropdown menu. 
+[*] Deaths can now be copied to clipboard to share them with your friends. 
 
 0.4.1 DL: 1,246 (01.11.2016 21:06)
-[*]Updated LibAddonMenu to version 2.0 r23
+[*] Updated LibAddonMenu to version 2.0 r23
 
 0.4.2 DL: 1,389 (07.11.2016 23:47)
-[*]Added Japanese Translation
+[*] Added Japanese Translation
 
 0.4.3 DL: 1,951 (05.02.2016 15:54)
-[*]API Bump to Homestead (100018)
+[*] API Bump to Homestead (100018)
 
 0.4.4 2,497 (19.03.2017) 14:31
-[*]Small fixes
+[*] Small fixes
 
 0.4.5 3,040 (22.05.2017) 22:39
-[*]API Bump to Morrowind (100019)
+[*] API Bump to Morrowind (100019)
 
 0.4.7 3,714 (13.08.2017) 20:40
-[*]API Bump to Horns of the Reach (100020)
+[*] API Bump to Horns of the Reach (100020)
 
 0.4.8 4,702 (01.05.2018) 19:24
-[*]API Bump to Clockwork City (100021)
-[*]Updated LibAddonMenu to version 2.0 r25 to fix an issue.
+[*] API Bump to Clockwork City (100021)
+[*] Updated LibAddonMenu to version 2.0 r25 to fix an issue.
 
 0.4.9 5,800 (21.05.2018) 16:20
-[*]API Bump to Summerset (100023)
-[*]Update LAM to r26
+[*] API Bump to Summerset (100023)
+[*] Update LAM to r26
 
 0.4.10: DL: 6,800 (13.08.2018) 01:17
-[*]skipped
+[*] skipped
 
 0.4.11: DL: 6,804 (13.08.2018) 01:38
-[*]API Bump to Wolfhunter (100024)
+[*] API Bump to Wolfhunter (100024)
 
 0.4.12: DL: 7,977 (21.10.2018) 19:58
-[*]API Bump to Murkmire (100025)
+[*] API Bump to Murkmire (100025)
 
 0.4.13: DL: 9,462 (22.01.2019) 00:38
-[*]API Bump to Wrathstone (100026)
-[*]Reorganized bundled libraries (Make sure to activate them in the Addon Panel)
+[*] API Bump to Wrathstone (100026)
+[*] Reorganized bundled libraries (Make sure to activate them in the Addon Panel)
 
 0.4.14: DL: 9,477 (22.01.2019) 01:10
-[*]API Bump to Wrathstone (100026)
+[*] API Bump to Wrathstone (100026)
 
 0.4.15: DL: 11,819 (19.05.2019) 21:28
-[*]API Bump to Elsweyr (100027)
-[*]Updated Libs
+[*] API Bump to Elsweyr (100027)
+[*] Updated Libs
 
 0.4.16: DL: 13,755 (04.08.2019) 02:41
-[*]Fixed an issue where the damage that exceeded your remaining HP (overkill) was not included. Thx to @DerFrostieee for reporting this.
+[*] Fixed an issue where the damage that exceeded your remaining HP (overkill) was not included. Thx to @DerFrostieee for reporting this.
 
 0.4.17: DL: 14,668 (12.08.2019) 01:03
-[*]Performance improvements
+[*] Performance improvements
+
+0.4.18: DL: 16,506 (20.10.2019) 23:02
+[*] API Bump to Dragonhold (100029)
+[*] Info: The next update will remove bundled libraries.
