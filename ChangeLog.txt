@@ -63,7 +63,7 @@
 [*] Info: The next update will remove bundled libraries.
 
 0.4.19: DL: 18,832 (22.02.2020) 22:59
-[*] API Bump to Dragonhold (100030)
+[*] API Bump to Harrowstorm (100030)
 [*] Removed bundled Libraries. If you haven't already, you need to install LibAddonMenu yourself.
 [*] Removed Libstub dependency and call LAM directly instead.
 [*] Code cleanup and small fixes
