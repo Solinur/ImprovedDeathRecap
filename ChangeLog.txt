@@ -61,3 +61,9 @@
 0.4.18: DL: 16,506 (20.10.2019) 23:02
 [*] API Bump to Dragonhold (100029)
 [*] Info: The next update will remove bundled libraries.
+
+0.4.19: DL: 18,832 (22.02.2020) 22:59
+[*] API Bump to Dragonhold (100030)
+[*] Removed bundled Libraries. If you haven't already, you need to install LibAddonMenu yourself.
+[*] Removed Libstub dependency and call LAM directly instead.
+[*] Code cleanup and small fixes

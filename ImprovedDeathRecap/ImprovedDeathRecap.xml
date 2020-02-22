@@ -16,7 +16,7 @@
 					
 					<Anchor point="TOPLEFT"/>
 					<Anchor point="BOTTOMRIGHT"/>
-					<Edge edgeSize=2 />
+					<Edge edgeSize="2" />
 				
 				</Backdrop>
 				
@@ -27,7 +27,7 @@
 				
 				</Label>
 				
-				<Button name="$(parent)CloseButton" inherits="ZO_ScrollUpButton" OnClicked="Click">
+				<Button name="$(parent)CloseButton" inherits="ZO_ScrollUpButton">
 					
 					<Anchor point="TOPRIGHT" offsetX="-10" offsetY="10"/>
 					
@@ -45,7 +45,7 @@
 					
 				</Button>
 				
-				<Button name="$(parent)ClipboardButton" inherits="ZO_ScrollUpButton" OnClicked="Click">
+				<Button name="$(parent)ClipboardButton" inherits="ZO_ScrollUpButton">
 					
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$(parent)Title" offsetX="10" offsetY="0" />
 					
@@ -79,7 +79,7 @@
 					
 					<TextureCoords left="0.181640625" right="0.818359375" top="0" bottom="1" />
 				
-				</Texture>.
+				</Texture>
 				
 				<Slider name="$(parent)Slider" mouseEnabled="true" step="1" hidden="true">
 					
@@ -98,7 +98,7 @@
 						bottom="0.6875"
 					/>
 					
-					<BackgroundMiddle textureFile="EsoUI/Art/ChatWindow/chat_scrollbar_track.dds" texLeft="-1"/>
+					<BackgroundMiddle textureFile="EsoUI/Art/ChatWindow/chat_scrollbar_track.dds" left="-1"/>
 					
 					<OnValueChanged> IDR.OnSliderValueChanged(self, value, eventReason) </OnValueChanged>
 					
@@ -189,7 +189,7 @@
 							<Anchor point="TOPLEFT"/>
 							<Anchor point="BOTTOMRIGHT"/>
 							
-							<Edge edgeSize=2 />
+							<Edge edgeSize="2" />
 							
 						</Backdrop>
 					</Controls>

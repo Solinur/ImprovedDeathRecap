@@ -9,7 +9,7 @@ IDR = IDR or {}
 local IDR = IDR
  
 IDR.name 		= "ImprovedDeathRecap"
-IDR.version 	= "0.4.18"
+IDR.version 	= "0.4.19"
 IDR.settings 	= {}
 
 IDR.defaults = 
@@ -326,7 +326,7 @@ SLASH_COMMANDS["/idr"] = IDR.Slash
 -- LAM Stuff
 function IDR.MakeMenu()
     -- load the settings->addons menu library
-	local menu = LibStub("LibAddonMenu-2.0")
+	local menu = LibAddonMenu2
 	local set = IDR.settings
 
     -- the panel for the addons menu
