@@ -1,5 +1,5 @@
 ZO_CreateStringId("SI_IMPROVED_DEATH_RECAP_LANG", "en")
-ZO_CreateStringId("SI_IMPROVED_DEATH_RECAP_FONT", "EsoUi/Common/Fonts/Univers57.otf") -- EsoUi/Common/Fonts/Univers57.otf
+ZO_CreateStringId("SI_IMPROVED_DEATH_RECAP_FONT", "$(MEDIUM_FONT)") -- EsoUi/Common/Fonts/Univers57.otf
 ZO_CreateStringId("SI_IMPROVED_DEATH_TITLE_FONT", "$(ANTIQUE_FONT)|24")
 
 -- Options Menu
