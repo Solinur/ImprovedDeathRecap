@@ -3,7 +3,7 @@
 		<Category name="Improved Death Recap">
 			<Action name="TOGGLE_DEATH_RECAP">
 				<Down>IDR.Toggle()</Down>
-			</Action>	
+			</Action>
 		</Category>
 	</Layer>
 </Bindings>

@@ -1,4 +1,4 @@
-﻿## Title: ImprovedDeathRecap
+## Title: ImprovedDeathRecap
 ## APIVersion: 100029 100030
 ## Author: Solinur/decay
 ## Version: 0.4.19

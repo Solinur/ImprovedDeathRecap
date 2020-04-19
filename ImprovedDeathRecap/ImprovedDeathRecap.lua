@@ -472,7 +472,7 @@ function IDR:Initialize(event, addon)
   
 	-- load saved variables
   
-	IDR.settings = ZO_SavedVars:New(IDR.name.."SavedVariables", 3, nil, IDR.defaults)
+	IDR.settings = ZO_SavedVars:NewCharacterIdSettings(IDR.name.."SavedVariables", 3, nil, IDR.defaults)
 	--IDR.settings = IDR.defaults
 	
 	tlw = IDR_TLW2
