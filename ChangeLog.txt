@@ -67,3 +67,6 @@
 [*] Removed bundled Libraries. If you haven't already, you need to install LibAddonMenu yourself.
 [*] Removed Libstub dependency and call LAM directly instead.
 [*] Code cleanup and small fixes
+
+0.4.20: DL: 21.423 (25.05.2020) 01:06
+[*] API Bump to Greymoor (100031)
