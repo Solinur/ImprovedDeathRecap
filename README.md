@@ -21,7 +21,7 @@ This is my first addon, my first programm in lua, so bear with me if it  is not 
 
 I want to mention Atropos (FTC) for some useful code for creating the log and also along with coolmodi (Group Damage) for what I learned from their Addons. Thanks for those helpful tools.
 
-*Decay2 aka Solinur (Pact EU)*
+*Solinur (EU)*
 
 ## Deutsch:
 
@@ -35,7 +35,7 @@ Das ist mein erstes Addon und auch mein erstes Programm in lua,  desawegen bitte
 
 Ich möchte mich bei Atropos (FTC) dafür bedanken, dass ich einige  nützliche Codezeilen übernehmen durfte und für das erstellen des  Logfensters außerdem bei noch Coolmodi (Group Damage) - Ich habe durch  deren Addons ich viel gelernt. Außerdem werden die folgenden  Bibliotheken benutzt: LibStub, LibAddonMenu (Seerah), und LibMsgWin  (Circonian). Vielen Dank für diese nützlichen Werkzeuge. 
 
-*Decay2 aka Solinur (Pact EU)*
+*Solinur (EU)*
 
 ## 日本語:
 
@@ -50,4 +50,4 @@ Ich möchte mich bei Atropos (FTC) dafür bedanken, dass ich einige  nützliche 
 Atropos (FTC)のアドオンのログの作成に役立ついくつかのコードやcoolmodi (Group Damage)のアドオンから私が学んだことについて、ここで言及しておきたいと思います。
 このアドオンでは次のライブラリを使っています: LibStub, LibAddonMenu (Seerah) 便利なツール群に感謝します。
 
-*Decay2 aka Solinur (Pact EU)*
+*Solinur ( EU)*
