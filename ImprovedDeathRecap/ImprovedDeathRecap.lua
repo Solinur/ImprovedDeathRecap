@@ -9,7 +9,7 @@ IDR = IDR or {}
 local IDR = IDR
  
 IDR.name 		= "ImprovedDeathRecap"
-IDR.version 	= "0.4.19"
+IDR.version 	= "0.4.21"
 IDR.settings 	= {}
 
 IDR.defaults = 
