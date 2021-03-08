@@ -76,3 +76,6 @@
 
 0.4.22: DL: 27.005 (03.11.2020) 00:19
 [*] API Bump to Markarth (100033)
+
+0.4.23: DL: 30.969 (08.03.2021) 11:00
+[*] API Bump to Flames of Ambition (100034)
