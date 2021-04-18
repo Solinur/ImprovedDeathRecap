@@ -9,7 +9,7 @@ IDR = IDR or {}
 local IDR = IDR
  
 IDR.name 		= "ImprovedDeathRecap"
-IDR.version 	= "0.4.23"
+IDR.version 	= "0.4.24"
 IDR.settings 	= {}
 
 IDR.defaults = 
@@ -297,7 +297,7 @@ function IDR.PostRecap(deathdata)
 		--d(deltatime,j.source,crit,hit,j.ability," for ","|cEEEEEE[",j.value,"]|r ",addinfo,"HP:",j.currenthp,"/",j.maxhp)
 		
 		local icon = zo_iconFormat(GetAbilityIcon(j.ability), IDR.settings.Winfontsize, IDR.settings.Winfontsize).." "
-		local dmgcol = IDR.dmgcolors[j.dmgtype]
+		local dmgcol = IDR.dmgcolors[j.dmgtype] or IDR.dmgcolors[DAMAGE_TYPE_NONE]
 		local message = (deltatime..hp..j.source..crit..hit..dmgcol..icon..cleanabilityName.."|r for ".."|cEEEEEE"..j.value.."|r "..addinfo..stam)
 		local text = (deltatime2..hp2..j.source..crit2..(hit2 or hit)..cleanabilityName.." for "..j.value.." "..addinfo..stam2.."\n")
 		if datatext ~= "" then datatext = datatext.." | "..text else datatext = text end
@@ -538,6 +538,7 @@ function IDR:Initialize(event, addon)
 		[DAMAGE_TYPE_DROWN] 	= "|ccccccc", 
 		[DAMAGE_TYPE_DISEASE] 	= "|cc48a9f", 
 		[DAMAGE_TYPE_POISON] 	= "|c9fb121", 
+		[DAMAGE_TYPE_BLEED] 	= "|cc20a38", 
 	}
 	
 end

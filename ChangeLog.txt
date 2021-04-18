@@ -79,3 +79,6 @@
 
 0.4.23: DL: 30.969 (08.03.2021) 11:00
 [*] API Bump to Flames of Ambition (100034)
+
+0.4.24: DL: 34.086 (18.04.2021) 21:06
+[*] Fixed an error that appeared when bleed damage occured
