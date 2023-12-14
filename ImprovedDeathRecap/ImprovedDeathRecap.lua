@@ -7,9 +7,9 @@ local dx = 1/GetSetting(SETTING_TYPE_UI, UI_SETTING_CUSTOM_SCALE)
 
 IDR = IDR or {}
 local IDR = IDR
- 
+
 IDR.name 		= "ImprovedDeathRecap"
-IDR.version 	= "0.4.24"
+IDR.version 	= "0.4.25"
 IDR.settings 	= {}
 
 IDR.defaults = 
@@ -126,13 +126,15 @@ end
 function IDR.UpdateDeathList() --similar to ZO_ComboBox_Base:AddItems(items) but with ipairs
 
 	local items = IDR.settings.deathhistory
-	
+
 	if items == nil or #items==0 then return end
 	local menu = IDR.dropdown
-	
+
 	menu:ClearItems()
-	
-	for k, v in ipairs(items) do -- use ipairs instead of pairs -> no need for sorting
+
+	local deathData = ZO_DeepTableCopy(items)
+
+	for k, v in ipairs(deathData) do -- use ipairs instead of pairs -> no need for sorting
 		v.callback = IDR.OnMenuSelect
         menu:AddItem(v, ZO_COMBOBOX_SUPRESS_UPDATE)
     end
@@ -142,7 +144,7 @@ end
 
 function IDR.OnMenuSelect(combobox, deathtimestamp, data, selectionChanged)
 	if selectionChanged then 
-		IDR.PostRecap(data) 
+		IDR.PostRecap(data)
 	end
 end
 
@@ -151,7 +153,6 @@ function IDR.showclipboard()
     IDR.clipboard:SetHidden(false)
     IDR.clipboardbox:TakeFocus()
 end
-
 
 function IDR.CombatEvent(eventCode , result , isError , abilityName , abilityGraphic , abilityActionSlotType , sourceName , sourceType , targetName , targetType , hitValue , powerType , damageType , log , sourceUnitId , targetUnitId , abilityId, overFlow)
 	local target = ZO_CachedStrFormat("<<!aC:1>>",targetName)
@@ -167,10 +168,9 @@ function IDR.CombatEvent(eventCode , result , isError , abilityName , abilityGra
 		local currenthp, maxhp, _ = GetUnitPower("player", POWERTYPE_HEALTH)
 		local currentstam, maxstam, _ = GetUnitPower("player", POWERTYPE_STAMINA)
 		local eventno = #IDR.currenthistory
-		if (IDR.newfight==true or IDR.currenthistory[1] == nil) then 
-			IDR.currenthistory={} 
-			IDR.newfight=false			
-			IDR.currenthistory[1] = {target=target, source=source, ability=abilityId, dmgtype=damageType, value=hitValue, hits=1, ttype=targetType, result=result, htime=timenow, timems=timems, currenthp=currenthp, maxhp=maxhp, currentstam=currentstam, maxstam=maxstam}
+		if (IDR.newfight==true or IDR.currenthistory[1] == nil) then
+			IDR.currenthistory={[1] = {target=target, source=source, ability=abilityId, dmgtype=damageType, value=hitValue, hits=1, ttype=targetType, result=result, htime=timenow, timems=timems, currenthp=currenthp, maxhp=maxhp, currentstam=currentstam, maxstam=maxstam}}
+			IDR.newfight=false
 			eventno = 1
 		elseif (IDR.currenthistory[eventno]["target"] == target and
 				IDR.currenthistory[eventno]["source"] == source and
@@ -182,16 +182,16 @@ function IDR.CombatEvent(eventCode , result , isError , abilityName , abilityGra
 		else
 			table.insert(IDR.currenthistory,eventno+1,{target=target, source=source, ability=abilityId, dmgtype=damageType, value=hitValue, hits=1, ttype=targetType, result=result, htime=timenow, timems=timems, currenthp=currenthp, maxhp=maxhp, currentstam=currentstam, maxstam=maxstam})
 			if eventno-1 > IDR.settings.MaxEvents then table.remove(IDR.currenthistory,1) end
-		end 
-	end	
+		end
+	end
 end
 
 function IDR.OnDeath(isDead)
-    if isDead then 
+    if isDead then
 		local deathtimems = GetGameTimeMilliseconds()
 		local deathtimestamp = GetDateStringFromTimestamp(GetTimeStamp())..", "..GetTimeString()
 		table.insert(IDR.settings.deathhistory,1,{data=IDR.currenthistory, name=deathtimestamp, deathtimems=deathtimems})
-		if #IDR.settings.deathhistory > IDR.settings.MaxDeaths then table.remove(IDR.settings.deathhistory,#IDR.settings.deathhistory) end 
+		if #IDR.settings.deathhistory > IDR.settings.MaxDeaths then table.remove(IDR.settings.deathhistory,#IDR.settings.deathhistory) end
 		IDR.UpdateDeathList()
 		IDR.dropdown:SelectItemByIndex(1, true)
 		zo_callLater(function () IDR.PostRecap(IDR.settings.deathhistory[1]) end, 50)
