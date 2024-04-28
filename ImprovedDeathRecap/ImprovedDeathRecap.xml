@@ -2,7 +2,8 @@
 	<Controls>
 		<TopLevelControl name="IDR_TLW2" clampedToScreen="true" hidden="true" resizeToFitDescendents="false" mouseEnabled="true" movable="true" resizeHandleSize="10">
 			
-			<Dimensions x="400" y="300" />
+			<Dimensions x="600" y="320" />
+			<DimensionConstraints minX="480" minY="125"/>
 			
 			<Anchor point="TOPRIGHT" offsetX="-50" offsetY="50"/>
 			

@@ -1,8 +1,8 @@
 ## Title: ImprovedDeathRecap
-## APIVersion: 100040
+## APIVersion: 100041 100042
 ## Author: Solinur
-## Version: 0.4.25
-## AddOnVersion: 425
+## Version: 0.4.26
+## AddOnVersion: 426
 ## DependsOn: LibAddonMenu-2.0
 ## OptionalDependsOn:
 ## SavedVariables: ImprovedDeathRecapSavedVariables

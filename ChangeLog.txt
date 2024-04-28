@@ -85,3 +85,6 @@
 
 0.4.25: DL: 52,635 (14.12.2023) 23:26
 [*] Avoid trying to save functions into the saved data. 
+
+0.4.26: DL: 58,261 (28.04.2024) 22:18
+[*] Added minimum constraint to window size
