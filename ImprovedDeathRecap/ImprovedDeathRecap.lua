@@ -6,11 +6,10 @@ local dx       = 1 / GetSetting(SETTING_TYPE_UI, UI_SETTING_CUSTOM_SCALE)
 
 IDR            = IDR or {}
 local IDR      = IDR
-
 IDR.name       = "ImprovedDeathRecap"
 IDR.version    = "1.0.0"
-local settings
 
+local settings
 local defaults =
 {
 	MaxEvents = 30,
@@ -262,7 +261,6 @@ end
 
 local function OnRevive()
 	if settings.HideOnRevive == true then
-		IDR.delayinprogress = true
 		em:UnregisterForUpdate("IDR_Hide")
 		em:RegisterForUpdate("IDR_Hide", settings.HideWinDelay * 1000, HideTLW)
 	end
@@ -385,7 +383,7 @@ local function GetLine(event, deathtime)
 	message_items[5] = hitMessage[result] or ("unknown event: " .. result)
 	message_items[6] = zo_iconFormat(GetAbilityIcon(event.ability), settings.Winfontsize, settings.Winfontsize)
 	message_items[7] = dmgColors[event.dmgtype] or dmgColors[DAMAGE_TYPE_NONE]
-	message_items[8] = ZO_CachedStrFormat("<<!aC:1>>", GetAbilityName(event.ability))
+	message_items[8] = result == ACTION_RESULT_FALL_DAMAGE and " falling down" or ZO_CachedStrFormat("<<!aC:1>>", GetAbilityName(event.ability))
 	message_items[9] = "|r for |cEEEEEE"
 	message_items[10] = event.value
 	message_items[11] = event.hits > 1 and string.format("|r (%dx)", event.hits) or "|r "
@@ -588,7 +586,7 @@ function IDR:Initialize(event, addon)
 
 	tlw = IDR_TLW2
 
-	IDR.currenthistory = {}
+	IDR.currenthistory = Queue:New()
 	IDR.Groupnames = {}
 
 	-- Register Events and filter them for specific types. Should be more efficient then getting them all and throwing most of them away
