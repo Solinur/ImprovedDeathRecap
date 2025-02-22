@@ -1,92 +1,90 @@
 -- define local variables as much as possible, so scope is local
 -- see http://lua-users.org/wiki/ScopeTutorial
-local em = GetEventManager()
-local wm = GetWindowManager()
-local _,tlw
-local dx = 1/GetSetting(SETTING_TYPE_UI, UI_SETTING_CUSTOM_SCALE)
+local em       = GetEventManager()
+local _, tlw
+local dx       = 1 / GetSetting(SETTING_TYPE_UI, UI_SETTING_CUSTOM_SCALE)
 
-IDR = IDR or {}
-local IDR = IDR
+IDR            = IDR or {}
+local IDR      = IDR
 
-IDR.name 		= "ImprovedDeathRecap"
-IDR.version 	= "0.4.26"
-IDR.settings 	= {}
+IDR.name       = "ImprovedDeathRecap"
+IDR.version    = "1.0.0"
+local settings
 
-IDR.defaults = 
+local defaults =
 {
-	MaxEvents=30,
-	MaxDeaths=10,
-	WinWidth=700,
-	WinHeight=300,
-	WinPos={TOPLEFT,GuiRoot,TOPLEFT,100,200},
-	WinLock=false,
-	WinOpacity=90,
-	ShowOnDeath=true,
-	HideOnRevive=true,
-	HideWinDelay=2,
-	HideOnCombat=true,
-	ShowAfterCombat=false,
-	Winfontsize=18,
-	stamthreshold=5000,
-	deathhistory={}
+	MaxEvents = 30,
+	MaxDeaths = 10,
+	WinWidth = 700,
+	WinHeight = 300,
+	WinPos = { TOPLEFT, GuiRoot, TOPLEFT, 100, 200 },
+	WinLock = false,
+	WinOpacity = 90,
+	ShowOnDeath = true,
+	HideOnRevive = true,
+	HideWinDelay = 2,
+	HideOnCombat = true,
+	ShowAfterCombat = false,
+	Winfontsize = 18,
+	stamthreshold = 5000,
+	deathhistory = {}
 }
 
 function IDR.Hide(delay, button)
 	local delay = delay or false
 	local button = button or 1
-	if (delay ==true and IDR.delayinprogress==false) or button~=1 then return end
+	if (delay == true and IDR.delayinprogress == false) or button ~= 1 then return end
 	tlw:SetHidden(true)
-	IDR.delayinprogress=false
+	IDR.delayinprogress = false
 end
 
 function IDR.Toggle()
 	tlw:SetHidden(not tlw:IsControlHidden())
-	IDR.delayinprogress=false
+	IDR.delayinprogress = false
 end
 
 function IDR.Show()
 	tlw:SetHidden(false)
-	IDR.delayinprogress=false
+	IDR.delayinprogress = false
 end
 
 function IDR.MoveWin()
-
-    -- Get the new position and dimensions
-    local isValidAnchor, point, relativeTo, relativePoint, offsetX, offsetY = tlw:GetAnchor()
-    local width , height = tlw:GetDimensions()
+	-- Get the new position and dimensions
+	local isValidAnchor, point, relativeTo, relativePoint, offsetX, offsetY = tlw:GetAnchor()
+	local width, height = tlw:GetDimensions()
 
 	-- Save the new settings
-    if ( isValidAnchor ) then IDR.settings.WinPos = {point,relativeTo,relativePoint,offsetX,offsetY} end
-	IDR.settings.WinWidth = width
-	IDR.settings.WinHeight = height
-	IDR.AdjustSlider()	
+	if (isValidAnchor) then settings.WinPos = { point, relativeTo, relativePoint, offsetX, offsetY } end
+	settings.WinWidth = width
+	settings.WinHeight = height
+	IDR.AdjustSlider()
 end
 
 function IDR.OnSliderValueChanged(slider, value, eventReason) -- self should be slider
 	local buffer = slider:GetParent():GetNamedChild("Buffer")
 	local numHistoryLines = buffer:GetNumHistoryLines()
-	local sliderValue = math.max(slider:GetValue(), math.floor((buffer:GetNumVisibleLines()+1)/dx)) -- correct for ui scale
+	local sliderValue = math.max(slider:GetValue(), math.floor((buffer:GetNumVisibleLines() + 1) / dx)) -- correct for ui scale
 	if eventReason == EVENT_REASON_HARDWARE then
-		buffer:SetScrollPosition(numHistoryLines-sliderValue)
+		buffer:SetScrollPosition(numHistoryLines - sliderValue)
 	end
 end
 
 function IDR.OnScrollButton(self, delta) -- self should be one of the slider buttons
 	local slider = self:GetParent()
 	local buffer = slider:GetParent():GetNamedChild("Buffer")
-	if delta~=nil and delta~=0 then 
-		buffer:SetScrollPosition(math.min(buffer:GetScrollPosition()+delta, math.floor(buffer:GetNumHistoryLines()))) -- correct for ui scale
-		slider:SetValue(slider:GetValue()-delta)
-	else	
+	if delta ~= nil and delta ~= 0 then
+		buffer:SetScrollPosition(math.min(buffer:GetScrollPosition() + delta, math.floor(buffer:GetNumHistoryLines()))) -- correct for ui scale
+		slider:SetValue(slider:GetValue() - delta)
+	else
 		buffer:SetScrollPosition(0)
 		slider:SetValue(buffer:GetNumHistoryLines())
 	end
 end
 
-function IDR.OnScrollMouse(buffer, delta, ctrl, alt, shift)  -- self should be buffer
+function IDR.OnScrollMouse(buffer, delta, ctrl, alt, shift) -- self should be buffer
 	local slider = buffer:GetParent():GetNamedChild("Slider")
 	if shift then
-		delta = delta * math.floor((buffer:GetNumVisibleLines())/dx) -- correct for ui scale
+		delta = delta * math.floor((buffer:GetNumVisibleLines()) / dx) -- correct for ui scale
 	elseif ctrl then
 		delta = delta * buffer:GetNumHistoryLines()
 	end
@@ -94,29 +92,29 @@ function IDR.OnScrollMouse(buffer, delta, ctrl, alt, shift)  -- self should be b
 	slider:SetValue(slider:GetValue() - delta)
 end
 
-function IDR.AdjustSlider()	
+function IDR.AdjustSlider()
 	local slider = tlw:GetNamedChild("Slider")
 	local buffer = tlw:GetNamedChild("Buffer")
 	local numHistoryLines = buffer:GetNumHistoryLines()
-	local numVisHistoryLines = math.floor((buffer:GetNumVisibleLines()+1)/dx) --it seems numVisHistoryLines is getting screwed by UI Scale
+	local numVisHistoryLines = math.floor((buffer:GetNumVisibleLines() + 1) / dx) --it seems numVisHistoryLines is getting screwed by UI Scale
 	local bufferScrollPos = buffer:GetScrollPosition()
 	local sliderMin, sliderMax = slider:GetMinMax()
 	local sliderValue = slider:GetValue()
-	
+
 	slider:SetMinMax(0, numHistoryLines)
-	
+
 	-- If the sliders at the bottom, stay at the bottom to show new text
 	if sliderValue == sliderMax then
 		slider:SetValue(numHistoryLines)
-	-- If the buffer is full start moving the slider up
+		-- If the buffer is full start moving the slider up
 	elseif numHistoryLines == buffer:GetMaxHistoryLines() then
-		slider:SetValue(sliderValue-1)
+		slider:SetValue(sliderValue - 1)
 	end -- Else the slider does not move
-	
+
 	-- If there are more history lines than visible lines show the slider
-	if numHistoryLines > numVisHistoryLines then 
+	if numHistoryLines > numVisHistoryLines then
 		slider:SetHidden(false)
-		slider:SetThumbTextureHeight(math.max(20, math.floor(numVisHistoryLines/numHistoryLines*slider:GetHeight())))
+		slider:SetThumbTextureHeight(math.max(20, math.floor(numVisHistoryLines / numHistoryLines * slider:GetHeight())))
 	else
 		-- else hide the slider
 		slider:SetHidden(true)
@@ -124,186 +122,300 @@ function IDR.AdjustSlider()
 end
 
 function IDR.UpdateDeathList() --similar to ZO_ComboBox_Base:AddItems(items) but with ipairs
+	local deathHistory = settings.deathhistory
+	if deathHistory == nil or #deathHistory == 0 then return end
 
-	local items = IDR.settings.deathhistory
-
-	if items == nil or #items==0 then return end
 	local menu = IDR.dropdown
-
 	menu:ClearItems()
 
-	local deathData = ZO_DeepTableCopy(items)
+	for _, deathData in ipairs(deathHistory) do -- use ipairs instead of pairs -> no need for sorting
+		local item = { data = deathData, callback = IDR.OnMenuSelect }
+		menu:AddItem(item, ZO_COMBOBOX_SUPRESS_UPDATE)
+	end
 
-	for k, v in ipairs(deathData) do -- use ipairs instead of pairs -> no need for sorting
-		v.callback = IDR.OnMenuSelect
-        menu:AddItem(v, ZO_COMBOBOX_SUPRESS_UPDATE)
-    end
-	
 	menu:UpdateItems()
 end
 
-function IDR.OnMenuSelect(combobox, deathtimestamp, data, selectionChanged)
-	if selectionChanged then 
-		IDR.PostRecap(data)
+function IDR.OnMenuSelect(_, _, item, selectionChanged)
+	if selectionChanged then
+		IDR.PostRecap(item.data)
 	end
 end
 
 function IDR.showclipboard()
-    IDR.clipboardbox:SetText(IDR.currenttext)
-    IDR.clipboard:SetHidden(false)
-    IDR.clipboardbox:TakeFocus()
+	IDR.currenttext = IDR.currenttext:gsub("|c......(.-)|r", "%1"):gsub("|t.-|t", "")
+	IDR.clipboardbox:SetText(IDR.currenttext)
+	IDR.clipboard:SetHidden(false)
+	IDR.clipboardbox:TakeFocus()
 end
 
-function IDR.CombatEvent(eventCode , result , isError , abilityName , abilityGraphic , abilityActionSlotType , sourceName , sourceType , targetName , targetType , hitValue , powerType , damageType , log , sourceUnitId , targetUnitId , abilityId, overFlow)
-	local target = ZO_CachedStrFormat("<<!aC:1>>",targetName)
-	
-	hitValue = overFlow + hitValue
-	
-	if (hitValue>0 and target==IDR.playername and (result==ACTION_RESULT_DAMAGE or result==ACTION_RESULT_CRITICAL_DAMAGE or result==ACTION_RESULT_DOT_TICK or result==ACTION_RESULT_DOT_TICK_CRITICAL or result==ACTION_RESULT_BLOCKED or result==ACTION_RESULT_BLOCKED_DAMAGE or result==ACTION_RESULT_ABSORBED or result==ACTION_RESULT_DAMAGE_SHIELDED or result==ACTION_RESULT_HEAL or result==ACTION_RESULT_CRITICAL_HEAL or result==ACTION_RESULT_HOT_TICK or result==ACTION_RESULT_HOT_TICK_CRITICAL or result==ACTION_RESULT_FALL_DAMAGE)) then
-		local target = ZO_CachedStrFormat("<<!aC:1>>",targetName)
-		local source = ZO_CachedStrFormat("<<!aC:1>>",sourceName)
-		--d("IDR: "..target.." is hit by ".. source.." with "..GetAbilityName(abilityId).." for ".. hitValue.." -- ("..targetType..","..IDR.groupstatus..")")
-		local timenow = GetSecondsSinceMidnight()
-		local timems = GetGameTimeMilliseconds()
-		local currenthp, maxhp, _ = GetUnitPower("player", POWERTYPE_HEALTH)
-		local currentstam, maxstam, _ = GetUnitPower("player", POWERTYPE_STAMINA)
-		local eventno = #IDR.currenthistory
-		if (IDR.newfight==true or IDR.currenthistory[1] == nil) then
-			IDR.currenthistory={[1] = {target=target, source=source, ability=abilityId, dmgtype=damageType, value=hitValue, hits=1, ttype=targetType, result=result, htime=timenow, timems=timems, currenthp=currenthp, maxhp=maxhp, currentstam=currentstam, maxstam=maxstam}}
-			IDR.newfight=false
-			eventno = 1
-		elseif (IDR.currenthistory[eventno]["target"] == target and
-				IDR.currenthistory[eventno]["source"] == source and
-				IDR.currenthistory[eventno]["ability"] == abilityId and
-				IDR.currenthistory[eventno]["dmgtype"] == damageType and
-				(timems - IDR.currenthistory[eventno]["timems"])<100) then  -- pool events which are similar and happen within 100ms
-			IDR.currenthistory[eventno]["value"] = IDR.currenthistory[eventno]["value"]+hitValue
-			IDR.currenthistory[eventno]["hits"] = IDR.currenthistory[eventno]["hits"]+1
-		else
-			table.insert(IDR.currenthistory,eventno+1,{target=target, source=source, ability=abilityId, dmgtype=damageType, value=hitValue, hits=1, ttype=targetType, result=result, htime=timenow, timems=timems, currenthp=currenthp, maxhp=maxhp, currentstam=currentstam, maxstam=maxstam})
-			if eventno-1 > IDR.settings.MaxEvents then table.remove(IDR.currenthistory,1) end
-		end
+local validResults = {
+	[ACTION_RESULT_DAMAGE] = true,
+	[ACTION_RESULT_CRITICAL_DAMAGE] = true,
+	[ACTION_RESULT_DOT_TICK] = true,
+	[ACTION_RESULT_DOT_TICK_CRITICAL] = true,
+	[ACTION_RESULT_BLOCKED] = true,
+	[ACTION_RESULT_BLOCKED_DAMAGE] = true,
+	[ACTION_RESULT_ABSORBED] = true,
+	[ACTION_RESULT_DAMAGE_SHIELDED] = true,
+	[ACTION_RESULT_HEAL] = true,
+	[ACTION_RESULT_CRITICAL_HEAL] = true,
+	[ACTION_RESULT_HOT_TICK] = true,
+	[ACTION_RESULT_HOT_TICK_CRITICAL] = true,
+	[ACTION_RESULT_FALL_DAMAGE] = true,
+}
+
+-- pool events which are similar and happen within 100ms
+local function isDoubleHitEvent(lastEvent, source, abilityId, timems)
+	return lastEvent.source == source and lastEvent.ability == abilityId and timems - lastEvent.timems < 100
+end
+
+function IDR.CombatEvent(_, result, _, _, _, _, sourceName, _, targetName, _, hitValue, _, damageType, _, _, _, abilityId,
+						 overFlow)
+	local totalHitValue = overFlow + hitValue
+
+	if totalHitValue <= 0 or validResults[result] == nil then return end
+
+	local source = ZO_CachedStrFormat("<<!aC:1>>", sourceName)
+	local timems = GetGameTimeMilliseconds()
+
+	local currenthp, maxhp = GetUnitPower("player", COMBAT_MECHANIC_FLAGS_HEALTH)
+	local currentstam, maxstam = GetUnitPower("player", COMBAT_MECHANIC_FLAGS_STAMINA)
+
+	local currentQueue = IDR.currenthistory
+	local lastItem = currentQueue.lastItem
+
+	if isDoubleHitEvent(lastItem, source, abilityId, timems) then
+		lastItem.value = lastItem.value + totalHitValue
+		lastItem.hits = lastItem.hits + 1
+		lastItem.currenthp = currenthp
+		lastItem.maxhp = maxhp
+		lastItem.currentstam = currentstam
+		lastItem.maxstam = maxstam
+		return
 	end
-end
 
-function IDR.OnDeath(isDead)
-    if isDead then
-		local deathtimems = GetGameTimeMilliseconds()
-		local deathtimestamp = GetDateStringFromTimestamp(GetTimeStamp())..", "..GetTimeString()
-		table.insert(IDR.settings.deathhistory,1,{data=IDR.currenthistory, name=deathtimestamp, deathtimems=deathtimems})
-		if #IDR.settings.deathhistory > IDR.settings.MaxDeaths then table.remove(IDR.settings.deathhistory,#IDR.settings.deathhistory) end
-		IDR.UpdateDeathList()
-		IDR.dropdown:SelectItemByIndex(1, true)
-		zo_callLater(function () IDR.PostRecap(IDR.settings.deathhistory[1]) end, 50)
-		if IDR.settings.ShowOnDeath == true then IDR.Show() end
+	local data
+	if currentQueue.last - currentQueue.first == settings.MaxEvents then
+		data = currentQueue:pop()
 	else
-		if IDR.settings.HideOnRevive == true then 
-			IDR.delayinprogress = true
-			zo_callLater(function () IDR.Hide(true) end, IDR.settings.HideWinDelay*1000)
-		end
+		data = {}
+	end
+
+	data.source = source
+	data.ability = abilityId
+	data.timems = timems
+	data.dmgtype = damageType
+	data.value = hitValue
+	data.hits = 1
+	data.result = result
+	data.currenthp = currenthp
+	data.maxhp = maxhp
+	data.currentstam = currentstam
+	data.maxstam = maxstam
+
+	currentQueue:push(data)
+end
+
+local Queue = {} -- from https://www.lua.org/pil/11.4.html
+
+function Queue:New()
+	return { first = 0, last = -1 }
+end
+
+function Queue:pop()
+	local first = self.first
+	if first > self.last then error("list is empty") end
+	local value = self[first]
+	self[first] = nil
+	self.first = first + 1
+	return value
+end
+
+function Queue:push(data)
+	local last = self.last + 1
+	self.last = last
+	self[last] = data
+	self.lastItem = data
+end
+
+local function OnDeath()
+	local deathTimems = GetGameTimeMilliseconds()
+	local deathTimestamp = GetDateStringFromTimestamp(GetTimeStamp()) .. ", " .. GetTimeString()
+	local deathHistory = settings.deathhistory
+	table.insert(deathHistory, 1, { data = IDR.currenthistory, name = deathTimestamp, deathtimems = deathTimems })
+	IDR.currenthistory = Queue:New()
+	if #deathHistory > settings.MaxDeaths then table.remove(deathHistory, #deathHistory) end
+
+	IDR.UpdateDeathList()
+	if settings.ShowOnDeath == true then
+		IDR.dropdown:SelectItemByIndex(1, true)
+		IDR.Show()
 	end
 end
 
-function IDR.OnPlayerCombatState(event, inCombat)
-	local wasopen = tlw:IsControlHidden()
-	if (inCombat==true) then 
-		IDR.newfight=true
-		if IDR.settings.HideOnCombat == true then IDR.Hide() end
-	elseif (inCombat==false) then
-		if (IDR.settings.ShowAfterCombat == true and wasopen==true) then IDR.Show() end
-	end 
+local function OnRevive()
+	if settings.HideOnRevive == true then
+		IDR.delayinprogress = true
+		zo_callLater(function() IDR.Hide(true) end, settings.HideWinDelay * 1000)
+	end
 end
 
-function IDR.Write( message , color )
+local function OnPlayerCombatState(event, inCombat)
+	local wasopen = tlw:IsControlHidden()
+	if (inCombat == true) then
+		IDR.currenthistory = Queue:New()
+		if settings.HideOnCombat == true then IDR.Hide() end
+	elseif (inCombat == false) then
+		if (settings.ShowAfterCombat == true and wasopen == true) then IDR.Show() end
+	end
+end
 
-	-- Validate args
-	if ( message == nil ) then return end
-	local color = color or {0.6,0.6,0.6}
+function IDR.Write(message, color)
+	if message == nil then return end
+	local color = color or { 0.6, 0.6, 0.6 }
 
-	-- Write to the log
-	tlw:GetNamedChild("Buffer"):AddMessage( message , unpack(color) )
+	tlw:GetNamedChild("Buffer"):AddMessage(message, unpack(color))
 	IDR.AdjustSlider()
 end
 
+local critResults = {
+	[ACTION_RESULT_CRITICAL_DAMAGE] = true,
+	[ACTION_RESULT_DOT_TICK_CRITICAL] = true,
+	[ACTION_RESULT_CRITICAL_HEAL] = true,
+	[ACTION_RESULT_HOT_TICK_CRITICAL] = true,
+}
+
+local RESULT_MESSAGE_NORMAL = " hits with "
+local RESULT_MESSAGE_BLOCKED = " hits the |cEEEEEEblock|r with "
+local RESULT_MESSAGE_ABSORBED = " gets absorbed by "
+local RESULT_MESSAGE_HEAL = " heals with "
+local RESULT_MESSAGE_FALL = "You got hurt by  "
+
+local hitMessage = {
+	[ACTION_RESULT_DAMAGE] = RESULT_MESSAGE_NORMAL,
+	[ACTION_RESULT_CRITICAL_DAMAGE] = RESULT_MESSAGE_NORMAL,
+	[ACTION_RESULT_DOT_TICK] = RESULT_MESSAGE_NORMAL,
+	[ACTION_RESULT_DOT_TICK_CRITICAL] = RESULT_MESSAGE_NORMAL,
+	[ACTION_RESULT_BLOCKED] = RESULT_MESSAGE_BLOCKED,
+	[ACTION_RESULT_BLOCKED_DAMAGE] = RESULT_MESSAGE_BLOCKED,
+	[ACTION_RESULT_ABSORBED] = RESULT_MESSAGE_ABSORBED,
+	[ACTION_RESULT_DAMAGE_SHIELDED] = RESULT_MESSAGE_ABSORBED,
+	[ACTION_RESULT_HEAL] = RESULT_MESSAGE_HEAL,
+	[ACTION_RESULT_CRITICAL_HEAL] = RESULT_MESSAGE_HEAL,
+	[ACTION_RESULT_HOT_TICK] = RESULT_MESSAGE_HEAL,
+	[ACTION_RESULT_HOT_TICK_CRITICAL] = RESULT_MESSAGE_HEAL,
+	[ACTION_RESULT_FALL_DAMAGE] = RESULT_MESSAGE_FALL,
+}
+
+local RESULT_COLOR_NORMAL = { 0.9, 0.5, 0.5 }
+local RESULT_COLOR_BLOCKED = { 1.0, 0.7, 0.4 }
+local RESULT_COLOR_ABSORBED = { 0.7, 0.5, 0.7 }
+local RESULT_COLOR_HEAL = { 0.5, 0.9, 0.5 }
+local RESULT_COLOR_FALL = { 0.5, 0.5, 0.8 }
+
+
+local resultColor = {
+	[ACTION_RESULT_DAMAGE] = RESULT_COLOR_NORMAL,
+	[ACTION_RESULT_CRITICAL_DAMAGE] = RESULT_COLOR_NORMAL,
+	[ACTION_RESULT_DOT_TICK] = RESULT_COLOR_NORMAL,
+	[ACTION_RESULT_DOT_TICK_CRITICAL] = RESULT_COLOR_NORMAL,
+	[ACTION_RESULT_BLOCKED] = RESULT_COLOR_BLOCKED,
+	[ACTION_RESULT_BLOCKED_DAMAGE] = RESULT_COLOR_BLOCKED,
+	[ACTION_RESULT_ABSORBED] = RESULT_COLOR_ABSORBED,
+	[ACTION_RESULT_DAMAGE_SHIELDED] = RESULT_COLOR_ABSORBED,
+	[ACTION_RESULT_HEAL] = RESULT_COLOR_HEAL,
+	[ACTION_RESULT_CRITICAL_HEAL] = RESULT_COLOR_HEAL,
+	[ACTION_RESULT_HOT_TICK] = RESULT_COLOR_HEAL,
+	[ACTION_RESULT_HOT_TICK_CRITICAL] = RESULT_COLOR_HEAL,
+	[ACTION_RESULT_FALL_DAMAGE] = RESULT_COLOR_FALL,
+}
+
+local function GetHealthColor(index)
+	if index <= 16 then
+		local char = string.sub("0123456789ABCDEF", index, index)
+		return "FF" .. char .. char .. "00"
+	end
+
+	index = 33 - index
+	local char = string.sub("0123456789ABCDEF", index, index)
+	return char .. char .. "FF00"
+end
+
+local healthColors = {}
+for index = 1, 32 do
+	healthColors[index] = GetHealthColor(index)
+end
+
+
+local dmgColors = {
+	[DAMAGE_TYPE_NONE]     = "|cE6E6E6",
+	[DAMAGE_TYPE_GENERIC]  = "|cE6E6E6",
+	[DAMAGE_TYPE_PHYSICAL] = "|cf4f2e8",
+	[DAMAGE_TYPE_FIRE]     = "|cff6600",
+	[DAMAGE_TYPE_SHOCK]    = "|cffff66",
+	[DAMAGE_TYPE_OBLIVION] = "|cd580ff",
+	[DAMAGE_TYPE_COLD]     = "|cb3daff",
+	[DAMAGE_TYPE_EARTH]    = "|cbfa57d",
+	[DAMAGE_TYPE_MAGIC]    = "|c9999ff",
+	[DAMAGE_TYPE_DROWN]    = "|ccccccc",
+	[DAMAGE_TYPE_DISEASE]  = "|cc48a9f",
+	[DAMAGE_TYPE_POISON]   = "|c9fb121",
+	[DAMAGE_TYPE_BLEED]    = "|cc20a38",
+}
+
+
+local message_items = {}
+local function GetLine(event, deathtime)
+	local result = event.result
+
+	message_items[1] = string.format("|cEEEEEE[%.3fs]|r ", (event.timems - deathtime) / 1000)
+
+	local healtColorIndex = math.floor(event.currenthp / event.maxhp * 31) + 1
+	message_items[2] = string.format("|c%sHP:%d/%d|r ", healthColors[healtColorIndex], event.currenthp, event.maxhp)
+	message_items[3] = event.source
+	message_items[4] = critResults[result] and " |cEEEEEEcritically|r" or ""
+	message_items[5] = hitMessage[result] or ("unknown event: " .. result)
+	message_items[6] = zo_iconFormat(GetAbilityIcon(event.ability), settings.Winfontsize, settings.Winfontsize) .. " "
+	message_items[7] = dmgColors[event.dmgtype] or dmgColors[DAMAGE_TYPE_NONE]
+	message_items[8] = ZO_CachedStrFormat("<<!aC:1>>", GetAbilityName(event.ability))
+	message_items[9] = "|r for |cEEEEEE"
+	message_items[10] = event.value
+	message_items[11] = event.hits > 1 and string.format("|r (%dx)", event.hits) or "|r "
+
+	if event.currentstam < settings.stamthreshold or settings.stamthreshold == 0 then
+		message_items[12] = string.format(" |c00BB00[Stam:%d/%d] |r", event.currentstam, event.maxstam)
+	end
+
+	local message = table.concat(message_items, "")
+	local color = resultColor[result] or { 0.9, 0.9, 0.7 }
+
+	return message, color
+end
+
 function IDR.PostRecap(deathdata)
-	local crit, crit2, hit, hit2, addinfo = "", "", "", "", ""
-	local color = {0.9,0.9,0.7}
 	local data = deathdata.data or {}
 	local deathtime = deathdata.deathtimems
-	local datatext = ""
+	local datatext = {}
 	tlw:GetNamedChild("Buffer"):Clear()
-	for i,j in pairs(data) do
-		local cleanabilityName = zo_strformat("<<!aC:1>>",GetAbilityName(j.ability))
-		--crits
-		if (j.result==ACTION_RESULT_CRITICAL_DAMAGE or j.result==ACTION_RESULT_DOT_TICK_CRITICAL) then
-			crit = " |cEEEEEEcritically|r"
-			crit2 = " critically"
-		elseif(	j.result==ACTION_RESULT_CRITICAL_HEAL or j.result==ACTION_RESULT_HOT_TICK_CRITICAL) then 
-			crit = " |cEEEEEEcritically|r"
-			crit2 = " critically"
-		else
-			crit = ""
-			crit2 = ""
+
+	if data.first ~= nil then -- legacy
+		for i, event in ipairs(data) do
+			local message, color = GetLine(event, deathtime)
+
+			datatext[#datatext + 1] = message
+			IDR.Write(message, color)
 		end
-		--Type of event
-		if (j.result==ACTION_RESULT_DAMAGE or j.result==ACTION_RESULT_CRITICAL_DAMAGE or j.result==ACTION_RESULT_DOT_TICK or j.result==ACTION_RESULT_DOT_TICK_CRITICAL) then 			
-			hit = " hits with "
-			color = {0.9,0.5,0.5}
-		elseif (j.result==ACTION_RESULT_BLOCKED or j.result==ACTION_RESULT_BLOCKED_DAMAGE) then 			
-			hit = " hits the |cEEEEEEblock|r with "
-			hit2 = " hits the block with "
-			color = {1,0.7,0.4}
-		elseif (j.result==ACTION_RESULT_ABSORBED or j.result==ACTION_RESULT_DAMAGE_SHIELDED) then 			
-			hit = " gets absorbed by "
-			color = {0.7,0.7,0.7}		
-		elseif (j.result==ACTION_RESULT_HEAL or j.result==ACTION_RESULT_CRITICAL_HEAL or j.result==ACTION_RESULT_HOT_TICK or j.result==ACTION_RESULT_HOT_TICK_CRITICAL) then 
-			hit = " heals with "
-			color = {0.5,0.9,0.5}
-		elseif (j.result==ACTION_RESULT_FALL_DAMAGE) then
-			color = {0.5,0.5,0.8}
-			hit = "You got hurt by  " 
-			cleanabilityName = " falling down"
-		else 
-			hit = "unknown event: "..j.result
-			color = {0.9,0.9,0.7}
+	else
+		for i = data.first, data.last do
+			local event = data[i]
+			local message, color = GetLine(event, deathtime)
+
+			datatext[#datatext + 1] = message
+			IDR.Write(message, color)
 		end
-		
-		--get precise time
-		local deltatime = "|cEEEEEE["..string.format("%.3f",(j.timems-deathtime)/1000).."s]|r "
-		local deltatime2 = "["..string.format("%.3f",(j.timems-deathtime)/1000).."s] "
-		--alter color for HP
-		local n = math.floor(j.currenthp/j.maxhp*31)+1
-		local s,t = "F","0"
-		if n<=16 then
-			t = string.sub("0123456789ABCDEF", n, n)
-		else
-			n = n-16
-			s = string.sub("FEDCBA9876543210", n, n)
-			t = "F"
-		end
-		local hpcolor = s..s..t..t.."00"	
-		local hp = "|c"..hpcolor.."HP:"..j.currenthp.."/"..j.maxhp.."|r "
-		local hp2 = "HP:"..j.currenthp.."/"..j.maxhp.." "
-		local stam = ""
-		local stam2 = ""
-		if j.currentstam<IDR.settings.stamthreshold or IDR.settings.stamthreshold==0 then
-			stam = " |c00BB00[Stam:"..j.currentstam.."/"..j.maxstam.."] |r "
-			stam2 = " [Stam:"..j.currentstam.."/"..j.maxstam.."]"
-		end
-		--compose number of hits bit
-		if j.hits>1 then addinfo = "("..tostring(j.hits).."x)" else addinfo = "" end
-		--compose message
-		--d(hit)
-		--d(deltatime,j.source,crit,hit,j.ability," for ","|cEEEEEE[",j.value,"]|r ",addinfo,"HP:",j.currenthp,"/",j.maxhp)
-		
-		local icon = zo_iconFormat(GetAbilityIcon(j.ability), IDR.settings.Winfontsize, IDR.settings.Winfontsize).." "
-		local dmgcol = IDR.dmgcolors[j.dmgtype] or IDR.dmgcolors[DAMAGE_TYPE_NONE]
-		local message = (deltatime..hp..j.source..crit..hit..dmgcol..icon..cleanabilityName.."|r for ".."|cEEEEEE"..j.value.."|r "..addinfo..stam)
-		local text = (deltatime2..hp2..j.source..crit2..(hit2 or hit)..cleanabilityName.." for "..j.value.." "..addinfo..stam2.."\n")
-		if datatext ~= "" then datatext = datatext.." | "..text else datatext = text end
-		IDR.Write(message , color)
 	end
-	IDR.currenttext = datatext
+	IDR.currenttext = table.concat(datatext, " | ")
 end
 
 -- Slash Commands
@@ -312,12 +424,12 @@ function IDR.Slash(extra)
 	local extra = extra or "help"
 	if extra == "show" then
 		IDR.forceopen = true
-		IDR.Show()		
+		IDR.Show()
 	elseif extra == "hide" then
 		IDR.forceopen = false
 		IDR.Hide()
 	else
-	d(GetString(SI_IMPROVED_DEATH_RECAP_HELPTEXT))
+		d(GetString(SI_IMPROVED_DEATH_RECAP_HELPTEXT))
 	end
 end
 
@@ -325,22 +437,21 @@ SLASH_COMMANDS["/idr"] = IDR.Slash
 
 -- LAM Stuff
 function IDR.MakeMenu()
-    -- load the settings->addons menu library
+	-- load the settings->addons menu library
 	local menu = LibAddonMenu2
-	local set = IDR.settings
 
-    -- the panel for the addons menu
+	-- the panel for the addons menu
 	local panel = {
 		type = "panel",
 		name = "Improved Death Recap",
 		displayName = "Improved Death Recap",
 		author = "Solinur",
-        version = "" .. IDR.version,
+		version = "" .. IDR.version,
 		registerForRefresh = true,
 		registerForDefaults = true,
 	}
 
-    --this addons entries in the addon menu
+	--this addons entries in the addon menu
 	local options = {
 		{
 			type = "header",
@@ -353,9 +464,9 @@ function IDR.MakeMenu()
 			min = 5,
 			max = 100,
 			step = 1,
-			getFunc = function() return set.MaxEvents end,
+			getFunc = function() return settings.MaxEvents end,
 			setFunc = function(value)
-				set.MaxEvents = value
+				settings.MaxEvents = value
 			end,
 		},
 		{
@@ -365,9 +476,9 @@ function IDR.MakeMenu()
 			min = 1,
 			max = 30,
 			step = 1,
-			getFunc = function() return set.MaxDeaths end,
+			getFunc = function() return settings.MaxDeaths end,
 			setFunc = function(value)
-				set.MaxDeaths = value
+				settings.MaxDeaths = value
 			end,
 		},
 		{
@@ -375,8 +486,8 @@ function IDR.MakeMenu()
 			name = SI_IMPROVED_DEATH_RECAP_MENU_LOCKWINDOW,
 			tooltip = SI_IMPROVED_DEATH_RECAP_MENU_LOCKWINDOW_TT,
 			getFunc = function() return tlw:IsMouseEnabled() end,
-			setFunc = function(value) 
-				set.WinLock = value
+			setFunc = function(value)
+				settings.WinLock = value
 				tlw:SetMouseEnabled(not value)
 			end,
 		},
@@ -387,10 +498,10 @@ function IDR.MakeMenu()
 			min = 0,
 			max = 100,
 			step = 5,
-			getFunc = function() return set.WinOpacity end,
+			getFunc = function() return settings.WinOpacity end,
 			setFunc = function(value)
-				set.WinOpacity = value
-				tlw:GetNamedChild("Bg"):SetAlpha(value/100)
+				settings.WinOpacity = value
+				tlw:GetNamedChild("Bg"):SetAlpha(value / 100)
 			end,
 		},
 		{
@@ -400,19 +511,19 @@ function IDR.MakeMenu()
 			min = 8,
 			max = 24,
 			step = 1,
-			getFunc = function() return set.Winfontsize end,
+			getFunc = function() return settings.Winfontsize end,
 			setFunc = function(value)
-				set.Winfontsize = value
-				tlw:GetNamedChild("Buffer"):SetFont(GetString(SI_IMPROVED_DEATH_RECAP_FONT).."|"..value)
+				settings.Winfontsize = value
+				tlw:GetNamedChild("Buffer"):SetFont(GetString(SI_IMPROVED_DEATH_RECAP_FONT) .. "|" .. value)
 			end,
 		},
 		{
 			type = "checkbox",
 			name = SI_IMPROVED_DEATH_RECAP_MENU_HIDEONREVIVE,
 			tooltip = SI_IMPROVED_DEATH_RECAP_MENU_HIDEONREVIVE_TT,
-			getFunc = function() return set.HideOnRevive end,
+			getFunc = function() return settings.HideOnRevive end,
 			setFunc = function(value)
-				set.HideOnRevive = value
+				settings.HideOnRevive = value
 			end,
 		},
 		{
@@ -422,28 +533,28 @@ function IDR.MakeMenu()
 			min = 0,
 			max = 30,
 			step = 1,
-			getFunc = function() return set.HideWinDelay end,
+			getFunc = function() return settings.HideWinDelay end,
 			setFunc = function(value)
-				set.HideWinDelay = value
+				settings.HideWinDelay = value
 			end,
-			disabled = function() return (not set.HideOnRevive) end,
+			disabled = function() return (not settings.HideOnRevive) end,
 		},
 		{
 			type = "checkbox",
 			name = SI_IMPROVED_DEATH_RECAP_MENU_HIDEINCOMBAT,
 			tooltip = SI_IMPROVED_DEATH_RECAP_MENU_HIDEINCOMBAT_TT,
-			getFunc = function() return set.HideOnCombat end,
+			getFunc = function() return settings.HideOnCombat end,
 			setFunc = function(value)
-				set.HideOnCombat = value
+				settings.HideOnCombat = value
 			end,
 		},
 		{
 			type = "checkbox",
 			name = SI_IMPROVED_DEATH_RECAP_MENU_SHOWAFTERCOMBAT,
 			tooltip = SI_IMPROVED_DEATH_RECAP_MENU_SHOWAFTERCOMBAT_TT,
-			getFunc = function() return set.ShowAfterCombat end,
+			getFunc = function() return settings.ShowAfterCombat end,
 			setFunc = function(value)
-				set.ShowAfterCombat = value
+				settings.ShowAfterCombat = value
 			end,
 		},
 		{
@@ -453,13 +564,13 @@ function IDR.MakeMenu()
 			min = 0,
 			max = 80000,
 			step = 1000,
-			getFunc = function() return set.stamthreshold end,
+			getFunc = function() return settings.stamthreshold end,
 			setFunc = function(value)
-				set.stamthreshold = value
+				settings.stamthreshold = value
 			end,
 		},
 	}
-	
+
 	menu:RegisterAddonPanel("IDROptions", panel)
 	menu:RegisterOptionControls("IDROptions", options)
 end
@@ -467,81 +578,60 @@ end
 -- Initialization
 function IDR:Initialize(event, addon)
 	if addon ~= IDR.name then return end
-	
-	em:UnregisterForEvent(IDR.name.."load", EVENT_ADD_ON_LOADED)
-  
+	em:UnregisterForEvent(IDR.name .. "load", EVENT_ADD_ON_LOADED)
+
 	-- load saved variables
-  
-	IDR.settings = ZO_SavedVars:NewCharacterIdSettings(IDR.name.."SavedVariables", 3, nil, IDR.defaults)
-	--IDR.settings = IDR.defaults
-	
+	settings = ZO_SavedVars:NewCharacterIdSettings(IDR.name .. "SavedVariables", 3, nil, defaults)
+
 	tlw = IDR_TLW2
-	
+
 	IDR.currenthistory = {}
 	IDR.Groupnames = {}
 
-	IDR.playername = zo_strformat("<<!aC:1>>",GetUnitName("player"))
-  
 	-- Register Events and filter them for specific types. Should be more efficient then getting them all and throwing most of them away
 	-- The filter will limit the events to the group members / the player only.
-  
-	em:RegisterForEvent(IDR.name.."combat", EVENT_COMBAT_EVENT , IDR.CombatEvent)
-	em:AddFilterForEvent(IDR.name.."combat", EVENT_COMBAT_EVENT, REGISTER_FILTER_UNIT_TAG_PREFIX, "player", REGISTER_FILTER_IS_ERROR, false)
-			
-	em:RegisterForEvent(IDR.name.."death",  EVENT_PLAYER_DEAD, function(...) IDR.OnDeath(true) end)
-	em:RegisterForEvent(IDR.name.."death2",  EVENT_PLAYER_ALIVE, function(...) IDR.OnDeath(false) end)
-     
-	em:RegisterForEvent(IDR.name.."incombat",  EVENT_PLAYER_COMBAT_STATE , IDR.OnPlayerCombatState)
-	
+
+	em:RegisterForEvent(IDR.name .. "combat", EVENT_COMBAT_EVENT, IDR.CombatEvent)
+	em:AddFilterForEvent(IDR.name .. "combat", EVENT_COMBAT_EVENT, REGISTER_FILTER_TARGET_COMBAT_UNIT_TYPE,
+		COMBAT_UNIT_TYPE_PLAYER, REGISTER_FILTER_IS_ERROR, false)
+
+	em:RegisterForEvent(IDR.name .. "death", EVENT_PLAYER_DEAD, OnDeath)
+	em:RegisterForEvent(IDR.name .. "revive", EVENT_PLAYER_ALIVE, OnRevive)
+
+	em:RegisterForEvent(IDR.name .. "incombat", EVENT_PLAYER_COMBAT_STATE, OnPlayerCombatState)
+
 	ZO_CreateStringId("SI_BINDING_NAME_TOGGLE_DEATH_RECAP", "Toggle Improved Death Recap")
-	
-	IDR.delayinprogress=false
-	
+
+	IDR.delayinprogress = false
+
 	IDR.MakeMenu()
 
 	IDR.forceopen = false
-	
+
 	tlw:ClearAnchors()
-	tlw:SetAnchor(unpack(IDR.settings.WinPos))
-	tlw:SetDimensions(IDR.settings.WinWidth,IDR.settings.WinHeight)
+	tlw:SetAnchor(unpack(settings.WinPos))
+	tlw:SetDimensions(settings.WinWidth, settings.WinHeight)
 	tlw:GetNamedChild("Title"):SetFont(GetString(SI_IMPROVED_DEATH_TITLE_FONT))
-	tlw:GetNamedChild("Buffer"):SetFont(GetString(SI_IMPROVED_DEATH_RECAP_FONT).."|"..IDR.settings.Winfontsize)
-	tlw:GetNamedChild("Bg"):SetAlpha(IDR.settings.WinOpacity/100)
-	tlw:SetMouseEnabled(not IDR.settings.WinLock)
-	
+	tlw:GetNamedChild("Buffer"):SetFont(GetString(SI_IMPROVED_DEATH_RECAP_FONT) .. "|" .. settings.Winfontsize)
+	tlw:GetNamedChild("Bg"):SetAlpha(settings.WinOpacity / 100)
+	tlw:SetMouseEnabled(not settings.WinLock)
+
 	IDR.dropdown = ZO_ComboBox_ObjectFromContainer(tlw:GetNamedChild("ComboBox"))
 	IDR.dropdown:SetSortsItems(false)
 	IDR.UpdateDeathList()
-	
+
 	IDR.clipboard = tlw:GetNamedChild("Clipboard")
 	IDR.clipboardbox = IDR.clipboard:GetNamedChild("Container"):GetNamedChild("Box")
-	
-    IDR.clipboardbox:SetMaxInputChars(100000)
-    IDR.clipboardbox:SetFont(GetString(SI_IMPROVED_DEATH_RECAP_FONT).."|"..IDR.settings.Winfontsize)
-    IDR.clipboardbox:SetHandler("OnTextChanged", function(control)
-        control:SelectAll()
-    end)
-    IDR.clipboardbox:SetHandler("OnFocusLost", function()
-        IDR.clipboard:SetHidden(true)
-    end)
-	
-	IDR.dmgcolors={ 
-		[DAMAGE_TYPE_NONE] 		= "|cE6E6E6", 
-		[DAMAGE_TYPE_GENERIC] 	= "|cE6E6E6", 
-		[DAMAGE_TYPE_PHYSICAL] 	= "|cf4f2e8", 
-		[DAMAGE_TYPE_FIRE] 		= "|cff6600", 
-		[DAMAGE_TYPE_SHOCK] 	= "|cffff66", 
-		[DAMAGE_TYPE_OBLIVION] 	= "|cd580ff", 
-		[DAMAGE_TYPE_COLD] 		= "|cb3daff", 
-		[DAMAGE_TYPE_EARTH] 	= "|cbfa57d", 
-		[DAMAGE_TYPE_MAGIC] 	= "|c9999ff", 
-		[DAMAGE_TYPE_DROWN] 	= "|ccccccc", 
-		[DAMAGE_TYPE_DISEASE] 	= "|cc48a9f", 
-		[DAMAGE_TYPE_POISON] 	= "|c9fb121", 
-		[DAMAGE_TYPE_BLEED] 	= "|cc20a38", 
-	}
-	
+
+	IDR.clipboardbox:SetMaxInputChars(100000)
+	IDR.clipboardbox:SetFont(GetString(SI_IMPROVED_DEATH_RECAP_FONT) .. "|" .. settings.Winfontsize)
+	IDR.clipboardbox:SetHandler("OnTextChanged", function(control)
+		control:SelectAll()
+	end)
+	IDR.clipboardbox:SetHandler("OnFocusLost", function()
+		IDR.clipboard:SetHidden(true)
+	end)
 end
 
 -- Finally, we'll register our event handler function to be called when the proper event occurs.
-em:RegisterForEvent(IDR.name.."load", EVENT_ADD_ON_LOADED, function(...) IDR:Initialize(...) end)
+em:RegisterForEvent(IDR.name .. "load", EVENT_ADD_ON_LOADED, function(...) IDR:Initialize(...) end)
